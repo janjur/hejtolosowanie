@@ -12,12 +12,36 @@ from PyQt6.QtCore import Qt
 
 API_URL_TEMPLATE = "https://api.hejto.pl/posts/XXX/likes?limit=10000"
 
+def prepare_api_url(url):
+    if url == '':
+        error_message = 'ERROR! Nie podano URL!'
+        print(error_message)
+        return error_message
 
-def losowanie(post_url):
-    post_title = post_url.split('/')[-1]
+    #  example of url = https://www.hejto.pl/wpis/czesc-dzis-update
+    url_parts = url.split('/')
+    #  example of url_parts = ['https:', '', 'www.hejto.pl', 'wpis', 'czesc-dzis-update']
+    
+    #  check if url is for hejto service
+    if url_parts != 'www.hejto.pl':
+        error_message = 'ERROR! Podany URL nie odnosi się do hejto!'
+        print(error_message)
+        return error_message
+    
+    post_title = url_parts[-1]
+
     api_url = API_URL_TEMPLATE.replace('XXX', post_title)
 
-    response = requests.get(api_url).json()
+    return api_url
+
+
+def losowanie(post_url):
+    #  example of post_url = https://www.hejto.pl/wpis/czesc-dzis-update
+    api_url_or_error = prepare_api_url(post_url)
+    if api_url_or_error.startswith('ERROR! '):
+        return api_url_or_error
+
+    response = requests.get(api_url_or_error).json()
 
     list_of_users_objects = response['_embedded']['items']
 
@@ -61,8 +85,11 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(container)
 
     def activate_tab_1(self):
-        winner = losowanie(self.input.text())
-        self.label.setText(winner)
+        winner_or_error = losowanie(self.input.text())
+        if winner_or_error.startswith('ERROR! '):
+            self.label.setText(winner_or_error)
+        else:
+            self.label.setText(winner_or_error)
 
 
 app = QApplication(sys.argv)
