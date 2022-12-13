@@ -13,6 +13,9 @@ from PyQt6.QtCore import Qt
 API_URL_TEMPLATE = "https://api.hejto.pl/posts/XXX/likes?limit=10000"
 
 def prepare_api_url(url):
+    """Return URL to API based on WEBSITE URL.
+       If given URL is empty or not leading to hejto.pl, return error message starting with "ERROR! ".
+    """
     if url == '':
         error_message = 'ERROR! Nie podano URL!'
         print(error_message)
@@ -36,6 +39,9 @@ def prepare_api_url(url):
 
 
 def losowanie(post_url):
+    """Return nickname of randomly chosen winner.
+       If error occurs, return error message starting with "ERROR! ".
+    """
     #  example of post_url = https://www.hejto.pl/wpis/czesc-dzis-update
     api_url_or_error = prepare_api_url(post_url)
     if api_url_or_error.startswith('ERROR! '):
@@ -81,11 +87,12 @@ class MainWindow(QMainWindow):
         container = QWidget()
         container.setLayout(layout)
 
-        # Set the central widget of the Window.
+        #  Set the central widget of the Window.
         self.setCentralWidget(container)
 
     def activate_tab_1(self):
         winner_or_error = losowanie(self.input.text())
+        #  Check if winner was chosen or error occured.
         if winner_or_error.startswith('ERROR! '):
             self.label.setText(winner_or_error)
         else:
