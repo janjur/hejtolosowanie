@@ -77,7 +77,7 @@ class MainWindow(QMainWindow):
 
 
         btn = QPushButton("KLIK")
-        btn.pressed.connect(self.activate_tab_1)
+        btn.pressed.connect(self.show_the_winner)
 
         layout = QVBoxLayout()
         layout.addWidget(self.input)
@@ -90,7 +90,7 @@ class MainWindow(QMainWindow):
         #  Set the central widget of the Window.
         self.setCentralWidget(container)
 
-    def activate_tab_1(self):
+    def show_the_winner(self):
         winner_or_error = losowanie(self.input.text())
         #  Check if winner was chosen or error occured.
         if winner_or_error.startswith('ERROR! '):
